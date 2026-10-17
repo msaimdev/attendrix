@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Attendance Report</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/theme.css"
+    >
+
+    <style>
+
+        html {
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+
+        /* =====================================================
+           NAVIGATION (shared styles come from theme.css)
+        ====================================================== */
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ====================================================== */
+
+        .container {
+            width: 100%;
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            padding:
+                32px 24px 50px;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ====================================================== */
+
+        .header {
+            width: 100%;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                flex-end;
+
+            gap: 20px;
+
+            margin-bottom: 28px;
+        }
+
+        .header-left {
+            min-width: 0;
+        }
+
+        .header-left h1 {
+            margin: 0;
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            letter-spacing:
+                -0.5px;
+        }
+
+        .subtitle {
+            margin-top: 7px;
+
+            color: #667085;
+
+            font-size: 15px;
+        }
+
+        .date-badge {
+            flex-shrink: 0;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e4e9f1;
+
+            border-radius: 10px;
+
+            padding:
+                10px 15px;
+
+            color: #475467;
+
+            font-size: 14px;
+
+            white-space: nowrap;
+
+            box-shadow:
+                0 2px 8px
+                rgba(
+                    16,
+                    24,
+                    40,
+                    0.04
+                );
+        }
+
+        .date-badge strong {
+            color: #172033;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           CONTROLS
+        ====================================================== */
+
+        .controls {
+            width: 100%;
+            max-width: 100%;
+
+            min-height: 86px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e4e9f1;
+
+            border-radius: 14px;
+
+            padding:
+                17px 20px;
+
+            margin-bottom: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            gap: 20px;
+
+            box-shadow:
+                0 3px 12px
+                rgba(
+                    16,
+                    24,
+                    40,
+                    0.04
+                );
+
+            overflow: hidden;
+        }
+
+        .filter-description {
+            flex: 1 1 auto;
+
+            min-width: 0;
+
+            color: #667085;
+
+            font-size: 14px;
+
+            line-height: 20px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+        .date-control {
+            flex: 0 0 auto;
+
+            width: 360px;
+
+            max-width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .date-control input {
+            flex: 1 1 auto;
+
+            width: 0;
+
+            min-width: 0;
+
+            height: 44px;
+
+            border:
+                1px solid #d6dce5;
+
+            border-radius: 9px;
+
+            background: #ffffff;
+
+            padding:
+                0 13px;
+
+            font-size: 14px;
+
+            color: #172033;
+
+            outline: none;
+        }
+
+        .date-control input:focus {
+            border-color:
+                #3976e8;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    57,
+                    118,
+                    232,
+                    0.12
+                );
+        }
+
+        .load-button {
+            flex: 0 0 auto;
+
+            height: 44px;
+
+            min-width: 125px;
+
+            padding:
+                0 18px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #172033;
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            transition:
+                background 0.18s ease,
+                opacity 0.18s ease;
+        }
+
+        .load-button:hover {
+            background: #26334d;
+        }
+
+        .load-button:disabled {
+            opacity: 0.65;
+
+            cursor: not-allowed;
+        }
+
+
+        /* =====================================================
+           REPORT DATE
+        ====================================================== */
+
+        .report-date {
+            width: 100%;
+
+            min-height: 24px;
+
+            margin-bottom: 18px;
+
+            color: #667085;
+
+            font-size: 14px;
+        }
+
+        .report-date strong {
+            color: #172033;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           SUMMARY
+        ====================================================== */
+
+        .summary {
+            width: 100%;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    minmax(0, 1fr)
+                );
+
+            gap: 15px;
+
+            margin-bottom: 30px;
+        }
+
+        .card {
+            min-width: 0;
+
+            min-height: 125px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e4e9f1;
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            box-shadow:
+                0 3px 12px
+                rgba(
+                    16,
+                    24,
+                    40,
+                    0.04
+                );
+        }
+
+        .card-title {
+            color: #667085;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            margin-bottom: 9px;
+        }
+
+        .card-value {
+            font-size: 30px;
+
+            line-height: 1;
+
+            font-weight: 700;
+
+            color: #172033;
+        }
+
+        .card-value.present {
+            color: #087443;
+        }
+
+        .card-value.absent {
+            color: #c4324b;
+        }
+
+        .card-value.percentage {
+            color: #3976e8;
+        }
+
+
+        /* =====================================================
+           SECTION HEADER
+        ====================================================== */
+
+        .section-header {
+            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            gap: 15px;
+
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            margin: 0;
+
+            font-size: 17px;
+
+            font-weight: 650;
+
+            color: #172033;
+        }
+
+        .section-description {
+            color: #667085;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           TABLE
+        ====================================================== */
+
+        .table-card {
+            width: 100%;
+            max-width: 100%;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e4e9f1;
+
+            border-radius: 14px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 3px 12px
+                rgba(
+                    16,
+                    24,
+                    40,
+                    0.04
+                );
+        }
+
+        .table-wrapper {
+            width: 100%;
+            max-width: 100%;
+
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            min-width: 600px;
+
+            border-collapse:
+                collapse;
+
+            table-layout:
+                fixed;
+        }
+
+        th {
+            height: 45px;
+
+            background: #f8fafc;
+
+            color: #667085;
+
+            font-size: 12px;
+
+            font-weight: 650;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.4px;
+
+            padding:
+                13px 20px;
+
+            text-align: left;
+
+            border-bottom:
+                1px solid #e9edf3;
+        }
+
+        td {
+            height: 58px;
+
+            padding:
+                15px 20px;
+
+            font-size: 14px;
+
+            color: #344054;
+
+            border-bottom:
+                1px solid #f0f2f5;
+        }
+
+        tbody tr {
+            transition:
+                background-color
+                0.15s ease;
+        }
+
+        tbody tr:hover {
+            background:
+                #f8faff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .class-name {
+            font-weight: 600;
+
+            color: #172033;
+        }
+
+        .number {
+            font-variant-numeric:
+                tabular-nums;
+        }
+
+        .present-number {
+            color: #087443;
+
+            font-weight: 600;
+        }
+
+        .absent-number {
+            color: #c4324b;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           EMPTY / ERROR
+        ====================================================== */
+
+        .empty {
+            width: 100%;
+
+            min-height: 80px;
+
+            padding:
+                25px 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            color: #667085;
+
+            font-size: 14px;
+        }
+
+        .error {
+            color: #c4324b;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 900px) {
+
+            .summary {
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    );
+            }
+
+            .controls {
+                flex-direction:
+                    column;
+
+                align-items:
+                    stretch;
+
+                gap: 12px;
+            }
+
+            .filter-description {
+                width: 100%;
+
+                white-space: normal;
+            }
+
+            .date-control {
+                width: 100%;
+
+                max-width: 100%;
+            }
+        }
+
+
+        @media (max-width: 700px) {
+
+            .container {
+                padding:
+                    24px 16px 40px;
+            }
+
+            .header {
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+            }
+
+            .date-badge {
+                width: 100%;
+            }
+
+            .summary {
+                gap: 10px;
+            }
+
+            .card {
+                min-height: 110px;
+
+                padding: 17px;
+            }
+
+            .card-value {
+                font-size: 26px;
+            }
+
+            .section-header {
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+                gap: 5px;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .header-left h1 {
+                font-size: 25px;
+            }
+
+            .controls {
+                padding:
+                    16px 18px;
+            }
+
+            .date-control {
+                flex-direction:
+                    column;
+
+                align-items:
+                    stretch;
+            }
+
+            .date-control input {
+                width: 100%;
+            }
+
+            .load-button {
+                width: 100%;
+            }
+
+            th,
+            td {
+                padding:
+                    12px 14px;
+            }
+
+            table {
+                min-width: 520px;
+            }
+        }
+
+
+        @media (max-width: 430px) {
+
+            .summary {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .card {
+                min-height: 100px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="container">
+
+
+        <!-- =====================================================
+             NAVIGATION
+        ====================================================== -->
+
+        <nav class="navigation">
+
+            <a
+                href="/"
+                class="nav-link"
+            >
+                Dashboard
+            </a>
+
+            <a
+                href="/students/page"
+                class="nav-link"
+            >
+                Students
+            </a>
+
+            <a
+                href="/attendance"
+                class="nav-link"
+            >
+                Attendance
+            </a>
+
+            <a
+                href="/attendance/history"
+                class="nav-link"
+            >
+                History
+            </a>
+
+            <a
+                href="/attendance/report"
+                class="nav-link active"
+            >
+                Reports
+            </a>
+
+            <a
+                href="/calendar"
+                class="nav-link"
+            >
+                Calendar
+            </a>
+
+            <a
+                href="/leaves"
+                class="nav-link"
+            >
+                Student Leave
+            </a>
+
+            <a
+                href="/settings"
+                class="nav-link"
+            >
+                Settings
+            </a>
+
+        </nav>
+
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div class="header-left">
+
+                <h1>
+                    Attendance Report
+                </h1>
+
+                <div class="subtitle">
+                    View attendance statistics by date
+                </div>
+
+            </div>
+
+
+            <div class="date-badge">
+
+                Report:
+
+                <strong
+                    id="report-date-badge"
+                >
+                    Loading...
+                </strong>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTROLS -->
+
+        <section class="controls">
+
+            <div class="filter-description">
+
+                Select a date to view
+                the attendance report
+
+            </div>
+
+
+            <div class="date-control">
+
+                <input
+                    type="date"
+                    id="date-input"
+                >
+
+
+                <button
+                    id="load-button"
+                    class="load-button"
+                    type="button"
+                >
+                    Load Report
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORT DATE -->
+
+        <div class="report-date">
+
+            Report Date:
+
+            <strong
+                id="report-date"
+            >
+                Loading...
+            </strong>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <section class="summary">
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Total Students
+                </div>
+
+                <div
+                    class="card-value"
+                    id="total-students"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Present
+                </div>
+
+                <div
+                    class="card-value present"
+                    id="present"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Absent
+                </div>
+
+                <div
+                    class="card-value absent"
+                    id="absent"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-title">
+                    Attendance
+                </div>
+
+                <div
+                    class="card-value percentage"
+                    id="attendance-percentage"
+                >
+                    0%
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SECTION HEADER -->
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Class Summary
+            </h2>
+
+            <div class="section-description">
+                Attendance breakdown by class
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <section class="table-card">
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Class
+                            </th>
+
+                            <th>
+                                Total Students
+                            </th>
+
+                            <th>
+                                Present
+                            </th>
+
+                            <th>
+                                Absent
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="class-summary-body"
+                    >
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div
+                class="empty"
+                id="empty-message"
+            >
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+<script>
+
+
+    /* =====================================================
+       GET TODAY'S DATE
+    ====================================================== */
+
+    function getTodayDate() {
+
+        const today =
+            new Date();
+
+
+        const year =
+            today.getFullYear();
+
+
+        const month =
+            String(
+                today.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const day =
+            String(
+                today.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    /* =====================================================
+       DISPLAY REPORT
+    ====================================================== */
+
+    function displayReport(report) {
+
+        const reportDate =
+            report.date || "—";
+
+
+        document.getElementById(
+            "report-date"
+        ).textContent =
+            reportDate;
+
+
+        document.getElementById(
+            "report-date-badge"
+        ).textContent =
+            reportDate;
+
+
+        document.getElementById(
+            "total-students"
+        ).textContent =
+            report.total_students ?? 0;
+
+
+        document.getElementById(
+            "present"
+        ).textContent =
+            report.present ?? 0;
+
+
+        document.getElementById(
+            "absent"
+        ).textContent =
+            report.absent ?? 0;
+
+
+        document.getElementById(
+            "attendance-percentage"
+        ).textContent =
+            `${report.attendance_percentage ?? 0}%`;
+
+
+        const tableBody =
+            document.getElementById(
+                "class-summary-body"
+            );
+
+
+        const emptyMessage =
+            document.getElementById(
+                "empty-message"
+            );
+
+
+        tableBody.innerHTML =
+            "";
+
+
+        const classes =
+            Object.entries(
+                report.classes || {}
+            );
+
+
+        if (
+            classes.length === 0
+        ) {
+
+            emptyMessage.textContent =
+                "No registered classes found.";
+
+            emptyMessage.className =
+                "empty";
+
+            return;
+        }
+
+
+        emptyMessage.textContent =
+            "";
+
+        emptyMessage.className =
+            "empty";
+
+
+        for (
+            const [
+                studentClass,
+                summary
+            ]
+            of classes
+        ) {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const classCell =
+                document.createElement(
+                    "td"
+                );
+
+            classCell.className =
+                "class-name";
+
+            classCell.textContent =
+                studentClass;
+
+
+            const totalCell =
+                document.createElement(
+                    "td"
+                );
+
+            totalCell.className =
+                "number";
+
+            totalCell.textContent =
+                summary.total_students ?? 0;
+
+
+            const presentCell =
+                document.createElement(
+                    "td"
+                );
+
+            presentCell.className =
+                "number present-number";
+
+            presentCell.textContent =
+                summary.present ?? 0;
+
+
+            const absentCell =
+                document.createElement(
+                    "td"
+                );
+
+            absentCell.className =
+                "number absent-number";
+
+            absentCell.textContent =
+                summary.absent ?? 0;
+
+
+            row.appendChild(
+                classCell
+            );
+
+            row.appendChild(
+                totalCell
+            );
+
+            row.appendChild(
+                presentCell
+            );
+
+            row.appendChild(
+                absentCell
+            );
+
+
+            tableBody.appendChild(
+                row
+            );
+        }
+    }
+
+
+    /* =====================================================
+       LOAD REPORT
+       ====================================================== */
+
+    async function loadReport() {
+
+        const date =
+            document.getElementById(
+                "date-input"
+            ).value;
+
+
+        const emptyMessage =
+            document.getElementById(
+                "empty-message"
+            );
+
+
+        if (!date) {
+
+            emptyMessage.textContent =
+                "Please select a date.";
+
+            emptyMessage.className =
+                "empty error";
+
+            return;
+        }
+
+
+        const button =
+            document.getElementById(
+                "load-button"
+            );
+
+
+        /*
+         * SAVE CURRENT VIEWPORT.
+         */
+
+        const savedScrollX =
+            window.scrollX;
+
+        const savedScrollY =
+            window.scrollY;
+
+
+        /*
+         * Keep button dimensions identical
+         * while loading.
+         */
+
+        const originalButtonWidth =
+            button.getBoundingClientRect()
+                .width;
+
+
+        button.disabled =
+            true;
+
+
+        button.style.width =
+            `${originalButtonWidth}px`;
+
+
+        button.textContent =
+            "Loading...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/attendance/report/${date}?t=${Date.now()}`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load attendance report."
+                );
+            }
+
+
+            const report =
+                await response.json();
+
+
+            displayReport(
+                report
+            );
+
+
+        } catch (error) {
+
+            document.getElementById(
+                "class-summary-body"
+            ).innerHTML =
+                "";
+
+
+            document.getElementById(
+                "total-students"
+            ).textContent =
+                "0";
+
+
+            document.getElementById(
+                "present"
+            ).textContent =
+                "0";
+
+
+            document.getElementById(
+                "absent"
+            ).textContent =
+                "0";
+
+
+            document.getElementById(
+                "attendance-percentage"
+            ).textContent =
+                "0%";
+
+
+            emptyMessage.textContent =
+                "Unable to load attendance report.";
+
+            emptyMessage.className =
+                "empty error";
+        }
+
+
+        /*
+         * Restore the exact viewport position
+         * AFTER the content has changed.
+         */
+
+        requestAnimationFrame(
+            function () {
+
+                window.scrollTo(
+                    savedScrollX,
+                    savedScrollY
+                );
+
+
+                requestAnimationFrame(
+                    function () {
+
+                        window.scrollTo(
+                            savedScrollX,
+                            savedScrollY
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        /*
+         * Restore button normally.
+         */
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "Load Report";
+
+        button.style.width =
+            `${originalButtonWidth}px`;
+    }
+
+
+    /* =====================================================
+       EVENTS
+    ====================================================== */
+
+    document
+        .getElementById(
+            "load-button"
+        )
+        .addEventListener(
+            "click",
+            loadReport
+        );
+
+
+    /* =====================================================
+       DEFAULT DATE
+    ====================================================== */
+
+    document.getElementById(
+        "date-input"
+    ).value =
+        getTodayDate();
+
+
+    /* =====================================================
+       INITIAL LOAD
+    ====================================================== */
+
+    loadReport();
+
+</script>
+
+
+</body>
+
+</html>

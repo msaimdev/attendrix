@@ -1,0 +1,25 @@
+﻿# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Local databases and attendance records
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Virtual environments and Python caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Logs and generated output
+logs/
+*.log
+
+# Local model binaries (distribution requires a separate license review)
+models/

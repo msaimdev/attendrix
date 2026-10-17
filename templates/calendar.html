@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>School Calendar - Face Attendance</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --success: #15803d;
+            --success-bg: #dcfce7;
+            --danger-bg: #fee2e2;
+            --blue-bg: #dbeafe;
+            --shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 32px 24px 50px;
+        }
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        .navigation {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 9px;
+
+            margin-bottom: 24px;
+        }
+
+        .nav-link {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 40px;
+
+            padding:
+                9px 14px;
+
+            border-radius: 8px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            color: #334155;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 650;
+
+            transition:
+                background 0.15s,
+                border-color 0.15s,
+                color 0.15s,
+                transform 0.05s;
+        }
+
+        .nav-link:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            border-color: var(--primary);
+
+            color: white;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .admin-badge {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 15px;
+            color: var(--muted);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+            white-space: nowrap;
+        }
+
+        .admin-badge strong {
+            color: var(--text);
+        }
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 26px;
+            margin-bottom: 26px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .section-description {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: var(--blue-bg);
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .form-title {
+            margin: 0 0 17px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 650;
+            color: #334155;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 42px;
+            padding: 0 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition:
+                border-color 0.15s,
+                box-shadow 0.15s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        input:disabled {
+            background: #e2e8f0;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .date-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* =====================================================
+           SINGLE DAY
+        ===================================================== */
+
+        .single-day-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 11px;
+        }
+
+        .single-day-wrapper input {
+            width: auto;
+            height: auto;
+        }
+
+        .single-day-label {
+            margin: 0;
+            font-weight: 500;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .help-text {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .form-actions {
+            margin-top: 19px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 650;
+            transition:
+                background 0.15s,
+                transform 0.05s;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+            padding: 7px 12px;
+            font-size: 13px;
+        }
+
+        .danger:hover {
+            background: #fecaca;
+            color: var(--danger-dark);
+        }
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            padding: 13px 15px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 700;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .date-range {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .date-main {
+            font-weight: 650;
+        }
+
+        .date-sub {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           BADGES
+        ===================================================== */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-off {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .badge-on {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge-type {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty {
+            padding: 35px 20px;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .empty-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        /* =====================================================
+           INFO BOX
+        ===================================================== */
+
+        .info-box {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-top: 17px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .info-icon {
+            font-weight: 800;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 760px) {
+            .container {
+                padding: 22px 15px 40px;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .admin-badge {
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .date-group {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            .section-header {
+                flex-direction: column;
+            }
+
+            .form-actions {
+                justify-content: stretch;
+            }
+
+            .form-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav class="navigation">
+
+        <a
+            href="/"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="/students/page"
+            class="nav-link"
+        >
+            Students
+        </a>
+
+        <a
+            href="/attendance"
+            class="nav-link"
+        >
+            Attendance
+        </a>
+
+        <a
+            href="/attendance/history"
+            class="nav-link"
+        >
+            History
+        </a>
+
+        <a
+            href="/attendance/report"
+            class="nav-link"
+        >
+            Reports
+        </a>
+
+        <a
+            href="/calendar"
+            class="nav-link active"
+        >
+            Calendar
+        </a>
+
+        <a
+            href="/leaves"
+            class="nav-link"
+        >
+            Student Leave
+        </a>
+
+        <a
+            href="/settings"
+            class="nav-link"
+        >
+            Settings
+        </a>
+
+    </nav>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="header">
+
+        <div class="header-left">
+
+            <h1>School Calendar</h1>
+
+            <div class="subtitle">
+                Manage school-wide and class-specific attendance days.
+            </div>
+
+        </div>
+
+        <div class="admin-badge">
+            Logged in as:
+            <strong>{{ admin.username }}</strong>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SCHOOL-WIDE CALENDAR
+    ====================================================== -->
+
+    <div class="section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title">
+                    School-wide Calendar
+                </h2>
+
+                <p class="section-description">
+                    These rules apply to the entire school.
+                    Use a date range for vacations and a single day
+                    for individual holidays.
+                </p>
+
+            </div>
+
+            <span class="section-label">
+                Entire School
+            </span>
+
+        </div>
+
+
+        <!-- ADD SCHOOL CALENDAR -->
+
+        <div class="form-card">
+
+            <h3 class="form-title">
+                Add School Calendar Entry
+            </h3>
+
+            <form
+                method="post"
+                action="/calendar/school"
+            >
+                <input
+                   type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token }}"
+                >
+
+                <div class="form-grid">
+
+                    <!-- DATE RANGE -->
+
+                    <div class="field full">
+
+                        <label>
+                            Date
+                        </label>
+
+                        <div class="date-group">
+
+                            <div>
+
+                                <label
+                                    for="school_start_date"
+                                    style="font-size:12px;"
+                                >
+                                    Start Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="school_start_date"
+                                    name="start_date"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    for="school_end_date"
+                                    style="font-size:12px;"
+                                >
+                                    End Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="school_end_date"
+                                    name="end_date"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="single-day-wrapper">
+
+                            <input
+                                type="checkbox"
+                                id="school_single_day"
+                            >
+
+                            <label
+                                for="school_single_day"
+                                class="single-day-label"
+                            >
+                                Single-day event
+                            </label>
+
+                        </div>
+
+                        <div class="help-text">
+                            For a one-day holiday, enable this option.
+                            Start and end date will automatically match.
+                        </div>
+
+                    </div>
+
+
+                    <!-- DAY TYPE -->
+
+                    <div class="field">
+
+                        <label for="school_type">
+                            Day Type
+                        </label>
+
+                        <select
+                            id="school_type"
+                            name="day_type"
+                            required
+                        >
+
+                            <option value="HOLIDAY">
+                                Holiday
+                            </option>
+
+                            <option value="VACATION">
+                                Vacation
+                            </option>
+
+                            <option value="CLOSED">
+                                Closed
+                            </option>
+
+                            <option value="SCHOOL">
+                                School Day
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ATTENDANCE -->
+
+                    <div class="field">
+
+                        <label for="school_attendance">
+                            Attendance
+                        </label>
+
+                        <select
+                            id="school_attendance"
+                            name="is_off"
+                        >
+
+                            <option value="true" selected>
+                                OFF — No Attendance
+                            </option>
+
+                            <option value="false">
+                                ON — Attendance Allowed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <div class="field full">
+
+                        <label for="school_title">
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="school_title"
+                            name="title"
+                            placeholder="e.g. Independence Day"
+                            maxlength="200"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary"
+                    >
+                        + Add School Calendar Entry
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- SCHOOL CALENDAR LIST -->
+
+        {% if school_calendar %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Date Range</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for entry in school_calendar %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="date-range">
+
+                                <span class="date-main">
+                                    {{ entry.start_date }}
+                                </span>
+
+                                {% if entry.start_date != entry.end_date %}
+
+                                    <span class="date-sub">
+                                        through {{ entry.end_date }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="date-sub">
+                                        Single day
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            <strong>
+                                {{ entry.title }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+
+                            <span class="badge badge-type">
+                                {{ entry.day_type.value }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if entry.is_off %}
+
+                                <span class="badge badge-off">
+                                    OFF
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-on">
+                                    SCHOOL
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <form
+                                method="post"
+                                action="/calendar/school/{{ entry.id }}/delete"
+                                onsubmit="return confirm('Delete this school calendar entry?');"
+                            >
+                                <input
+                                   type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="danger"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📅
+                </div>
+
+                No school-wide calendar entries yet.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         CLASS-SPECIFIC CALENDAR
+    ====================================================== -->
+
+    <div class="section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title">
+                    Class-specific Calendar
+                </h2>
+
+                <p class="section-description">
+                    These rules affect only the selected class.
+                    School-wide closures always take priority.
+                </p>
+
+            </div>
+
+            <span class="section-label">
+                Selected Class
+            </span>
+
+        </div>
+
+
+        <!-- ADD CLASS CALENDAR -->
+
+        <div class="form-card">
+
+            <h3 class="form-title">
+                Add Class Calendar Entry
+            </h3>
+
+            <form
+                method="post"
+                action="/calendar/class"
+            >
+                <input
+                   type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token }}"
+                >
+
+                <div class="form-grid">
+
+                    <!-- CLASS -->
+
+                    <div class="field">
+
+                        <label for="class_name">
+                            Class
+                        </label>
+
+                        <input
+                            type="text"
+                            id="class_name"
+                            name="class_name"
+                            placeholder="e.g. 8-A"
+                            maxlength="50"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DAY TYPE -->
+
+                    <div class="field">
+
+                        <label for="class_type">
+                            Day Type
+                        </label>
+
+                        <select
+                            id="class_type"
+                            name="day_type"
+                            required
+                        >
+
+                            <option value="HOLIDAY">
+                                Holiday
+                            </option>
+
+                            <option value="VACATION">
+                                Vacation
+                            </option>
+
+                            <option value="CLOSED">
+                                Closed
+                            </option>
+
+                            <option value="SCHOOL">
+                                School Day
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DATE RANGE -->
+
+                    <div class="field full">
+
+                        <label>
+                            Date Range
+                        </label>
+
+                        <div class="date-group">
+
+                            <div>
+
+                                <label
+                                    for="class_start_date"
+                                    style="font-size:12px;"
+                                >
+                                    Start Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="class_start_date"
+                                    name="start_date"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label
+                                    for="class_end_date"
+                                    style="font-size:12px;"
+                                >
+                                    End Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="class_end_date"
+                                    name="end_date"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <div class="field full">
+
+                        <label for="class_title">
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="class_title"
+                            name="title"
+                            placeholder="e.g. Class trip"
+                            maxlength="200"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ATTENDANCE -->
+
+                    <div class="field">
+
+                        <label for="class_attendance">
+                            Attendance
+                        </label>
+
+                        <select
+                            id="class_attendance"
+                            name="is_off"
+                        >
+
+                            <option value="true" selected>
+                                OFF — No Attendance
+                            </option>
+
+                            <option value="false">
+                                ON — Attendance Allowed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="primary"
+                    >
+                        + Add Class Calendar Entry
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- CLASS CALENDAR LIST -->
+
+        {% if class_calendar %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Class</th>
+                        <th>Date Range</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for entry in class_calendar %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ entry.class_name }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+
+                            <div class="date-range">
+
+                                <span class="date-main">
+                                    {{ entry.start_date }}
+                                </span>
+
+                                {% if entry.start_date != entry.end_date %}
+
+                                    <span class="date-sub">
+                                        through {{ entry.end_date }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="date-sub">
+                                        Single day
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            <strong>
+                                {{ entry.title }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+
+                            <span class="badge badge-type">
+                                {{ entry.day_type.value }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if entry.is_off %}
+
+                                <span class="badge badge-off">
+                                    OFF
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-on">
+                                    SCHOOL
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <form
+                                method="post"
+                                action="/calendar/class/{{ entry.id }}/delete"
+                                onsubmit="return confirm('Delete this class calendar entry?');"
+                            >
+                                <input
+                                   type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="danger"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🎓
+                </div>
+
+                No class-specific calendar entries yet.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+
+    <div class="info-box">
+
+        <div class="info-icon">
+            ℹ
+        </div>
+
+        <div>
+            <strong>Attendance rule:</strong>
+            School-wide OFF days apply to everyone.
+            Class-specific OFF days apply only to that class.
+            If neither rule marks the day as OFF, attendance is allowed.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script>
+
+    /*
+     * SCHOOL-WIDE SINGLE DAY
+     *
+     * When enabled:
+     * Start Date = End Date
+     * End Date becomes disabled.
+     */
+
+    const schoolStart =
+        document.getElementById(
+            "school_start_date"
+        );
+
+    const schoolEnd =
+        document.getElementById(
+            "school_end_date"
+        );
+
+    const schoolSingleDay =
+        document.getElementById(
+            "school_single_day"
+        );
+
+
+    schoolSingleDay.addEventListener(
+        "change",
+        function () {
+
+            if (this.checked) {
+
+                schoolEnd.value =
+                    schoolStart.value;
+
+                schoolEnd.disabled = false;
+
+            } else {
+
+                schoolEnd.disabled = false;
+
+            }
+
+        }
+    );
+
+
+    schoolStart.addEventListener(
+        "change",
+        function () {
+
+            if (schoolSingleDay.checked) {
+
+                schoolEnd.value =
+                    schoolStart.value;
+
+            }
+
+        }
+    );
+
+
+    /*
+     * Prevent an invalid date range.
+     */
+
+    schoolEnd.addEventListener(
+        "change",
+        function () {
+
+            if (
+                schoolStart.value &&
+                schoolEnd.value &&
+                schoolEnd.value < schoolStart.value
+            ) {
+
+                alert(
+                    "End date cannot be before start date."
+                );
+
+                schoolEnd.value =
+                    schoolStart.value;
+
+            }
+
+        }
+    );
+
+
+    /*
+     * CLASS DATE RANGE VALIDATION
+     */
+
+    const classStart =
+        document.getElementById(
+            "class_start_date"
+        );
+
+    const classEnd =
+        document.getElementById(
+            "class_end_date"
+        );
+
+
+    classEnd.addEventListener(
+        "change",
+        function () {
+
+            if (
+                classStart.value &&
+                classEnd.value &&
+                classEnd.value < classStart.value
+            ) {
+
+                alert(
+                    "End date cannot be before start date."
+                );
+
+                classEnd.value =
+                    classStart.value;
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard - Face Attendance System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+
+            --success: #15803d;
+            --success-bg: #dcfce7;
+
+            --warning: #b45309;
+            --warning-bg: #fef3c7;
+
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+
+            --blue-bg: #dbeafe;
+
+            --shadow:
+                0 8px 25px rgba(15, 23, 42, 0.07);
+        }
+
+        body {
+            margin: 0;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+
+            padding:
+                32px 24px 50px;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 20px;
+
+            margin-bottom: 24px;
+        }
+
+        .header-left h1 {
+            margin: 0;
+
+            font-size: 32px;
+            font-weight: 750;
+
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+
+            color: var(--muted);
+
+            font-size: 15px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .admin-badge {
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            padding: 11px 15px;
+
+            color: var(--muted);
+
+            box-shadow:
+                0 2px 8px rgba(15, 23, 42, 0.04);
+
+            white-space: nowrap;
+        }
+
+        .admin-badge strong {
+            color: var(--text);
+        }
+
+        .logout-button {
+            border: none;
+            border-radius: 8px;
+
+            padding: 10px 14px;
+
+            background: var(--danger-bg);
+            color: var(--danger);
+
+            font-size: 13px;
+            font-weight: 650;
+
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #fecaca;
+        }
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        .navigation {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 9px;
+
+            margin-bottom: 24px;
+        }
+
+        .nav-link {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 40px;
+
+            padding:
+                9px 14px;
+
+            border-radius: 8px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            color: #334155;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 650;
+
+            transition:
+                background 0.15s,
+                border-color 0.15s,
+                color 0.15s,
+                transform 0.05s;
+        }
+
+        .nav-link:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            border-color: var(--primary);
+
+            color: white;
+        }
+
+        /* =====================================================
+           SYSTEM STATUS
+        ===================================================== */
+
+        .status-card {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 14px;
+
+            padding: 20px 22px;
+
+            margin-bottom: 22px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .status-left {
+            display: flex;
+
+            align-items: center;
+
+            gap: 13px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+
+            border-radius: 50%;
+
+            background: var(--success);
+
+            flex-shrink: 0;
+        }
+
+        .status-dot.warning {
+            background: var(--warning);
+        }
+
+        .status-dot.danger {
+            background: var(--danger);
+        }
+
+        .status-title {
+            margin: 0;
+
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .status-description {
+            margin: 4px 0 0;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding:
+                7px 11px;
+
+            border-radius: 999px;
+
+            background: var(--success-bg);
+            color: var(--success);
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .status-badge.warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .status-badge.danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 18px;
+
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+
+            border: 1px solid var(--border);
+            border-radius: 14px;
+
+            padding: 21px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            color: var(--muted);
+
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .stat-value {
+            margin-top: 8px;
+
+            font-size: 30px;
+            font-weight: 750;
+
+            letter-spacing: -0.5px;
+        }
+
+        .stat-description {
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           MAIN GRID
+        ===================================================== */
+
+        .main-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 2fr)
+                minmax(300px, 1fr);
+
+            gap: 24px;
+        }
+
+        .section {
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 14px;
+
+            padding: 23px;
+
+            box-shadow: var(--shadow);
+
+            margin-bottom: 24px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: flex-start;
+
+            gap: 15px;
+
+            margin-bottom: 19px;
+        }
+
+        .section-title {
+            margin: 0;
+
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .section-description {
+            margin: 5px 0 0;
+
+            color: var(--muted);
+
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           ATTENDANCE SUMMARY
+        ===================================================== */
+
+        .attendance-summary {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 12px;
+        }
+
+        .attendance-item {
+            padding: 16px;
+
+            border-radius: 10px;
+
+            border: 1px solid var(--border);
+
+            background: #f8fafc;
+        }
+
+        .attendance-item-label {
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .attendance-item-value {
+            margin-top: 6px;
+
+            font-size: 24px;
+            font-weight: 750;
+        }
+
+        /* =====================================================
+           PROGRESS
+        ===================================================== */
+
+        .progress-wrapper {
+            margin-top: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 8px;
+
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .progress-header span:last-child {
+            color: var(--primary);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 9px;
+
+            border-radius: 999px;
+
+            background: #e2e8f0;
+
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+
+            width: 0%;
+
+            border-radius: 999px;
+
+            background: var(--primary);
+
+            transition:
+                width 0.3s ease;
+        }
+
+        /* =====================================================
+           QUICK ACTIONS
+        ===================================================== */
+
+        .quick-actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 11px;
+        }
+
+        .quick-action {
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            min-height: 100px;
+
+            padding: 16px;
+
+            border-radius: 10px;
+
+            border: 1px solid var(--border);
+
+            background: #f8fafc;
+
+            text-decoration: none;
+
+            color: var(--text);
+
+            transition:
+                background 0.15s,
+                border-color 0.15s,
+                transform 0.05s;
+        }
+
+        .quick-action:hover {
+            background: white;
+
+            border-color: #cbd5e1;
+
+            transform: translateY(-1px);
+        }
+
+        .quick-action-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .quick-action-description {
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            line-height: 1.4;
+        }
+
+        /* =====================================================
+           CALENDAR STATUS
+        ===================================================== */
+
+        .calendar-status {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+
+            padding: 16px;
+
+            border-radius: 10px;
+
+            background: var(--success-bg);
+
+            border: 1px solid #bbf7d0;
+        }
+
+        .calendar-status.off {
+            background: var(--danger-bg);
+
+            border-color: #fecaca;
+        }
+
+        .calendar-status.warning {
+            background: var(--warning-bg);
+
+            border-color: #fde68a;
+        }
+
+        .calendar-status-icon {
+            font-size: 19px;
+
+            line-height: 1;
+        }
+
+        .calendar-status-title {
+            font-weight: 700;
+
+            font-size: 14px;
+        }
+
+        .calendar-status-description {
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           SCHEDULER
+        ===================================================== */
+
+        .scheduler-box {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 12px;
+
+            padding: 16px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+        }
+
+        .scheduler-indicator {
+            width: 10px;
+            height: 10px;
+
+            margin-top: 5px;
+
+            border-radius: 50%;
+
+            background: var(--success);
+
+            flex-shrink: 0;
+        }
+
+        .scheduler-indicator.warning {
+            background: var(--warning);
+        }
+
+        .scheduler-indicator.danger {
+            background: var(--danger);
+        }
+
+        .scheduler-title {
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+        .scheduler-description {
+            margin-top: 5px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           INFORMATION ROWS
+        ===================================================== */
+
+        .info-list {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+        .info-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 12px 14px;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+        }
+
+        .info-label {
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .info-value {
+            color: var(--text);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            text-align: right;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 760px) {
+
+            .container {
+                padding:
+                    22px 15px 40px;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .header-right {
+                width: 100%;
+            }
+
+            .admin-badge {
+                flex: 1;
+            }
+
+            .navigation {
+                display: grid;
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .nav-link {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .attendance-summary {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .navigation {
+                grid-template-columns: 1fr;
+            }
+
+            .attendance-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .status-card {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .info-row {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav class="navigation">
+
+        <a
+            href="/"
+            class="nav-link active"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="/students/page"
+            class="nav-link"
+        >
+            Students
+        </a>
+
+        <a
+            href="/attendance"
+            class="nav-link"
+        >
+            Attendance
+        </a>
+
+        <a
+            href="/attendance/history"
+            class="nav-link"
+        >
+            History
+        </a>
+
+        <a
+            href="/attendance/report"
+            class="nav-link"
+        >
+            Reports
+        </a>
+
+        <a
+            href="/calendar"
+            class="nav-link"
+        >
+            Calendar
+        </a>
+
+        <a
+            href="/leaves"
+            class="nav-link"
+        >
+            Student Leave
+        </a>
+
+        <a
+            href="/settings"
+            class="nav-link"
+        >
+            Settings
+        </a>
+
+    </nav>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="header">
+
+        <div class="header-left">
+
+            <h1>
+                Face Attendance System
+            </h1>
+
+            <div class="subtitle">
+                School attendance management dashboard
+            </div>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <div class="admin-badge">
+
+                Logged in as:
+                <strong>{{ admin.username }}</strong>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="/logout"
+            >
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token }}"
+    >
+
+                <button
+                    type="submit"
+                    class="logout-button"
+                >
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SYSTEM STATUS
+    ====================================================== -->
+
+    <div class="status-card">
+
+        <div class="status-left">
+
+            <div
+                id="systemDot"
+                class="status-dot"
+            ></div>
+
+
+            <div>
+
+                <h2
+                    id="systemTitle"
+                    class="status-title"
+                >
+                    System Online
+                </h2>
+
+
+                <p
+                    id="systemDescription"
+                    class="status-description"
+                >
+                    Face Attendance System is running normally.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="systemBadge"
+            class="status-badge"
+        >
+            ONLINE
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Students
+            </div>
+
+            <div class="stat-value">
+                {{ total_students }}
+            </div>
+
+            <div class="stat-description">
+                Active registered students
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Present Today
+            </div>
+
+            <div class="stat-value">
+                {{ present_count }}
+            </div>
+
+            <div class="stat-description">
+                Students marked present
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Late Today
+            </div>
+
+            <div class="stat-value">
+                {{ late_count }}
+            </div>
+
+            <div class="stat-description">
+                Students marked late
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                On Leave
+            </div>
+
+            <div class="stat-value">
+                {{ leave_count }}
+            </div>
+
+            <div class="stat-description">
+                Approved student leave
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <div class="main-grid">
+
+
+        <!-- =================================================
+             LEFT COLUMN
+        ================================================== -->
+
+        <div>
+
+
+            <!-- TODAY'S ATTENDANCE -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Today's Attendance
+                        </h2>
+
+                        <p class="section-description">
+                            Attendance status for the current school day.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="attendance-summary">
+
+
+                    <div class="attendance-item">
+
+                        <div class="attendance-item-label">
+                            Present
+                        </div>
+
+                        <div class="attendance-item-value">
+                            {{ present_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="attendance-item">
+
+                        <div class="attendance-item-label">
+                            Late
+                        </div>
+
+                        <div class="attendance-item-value">
+                            {{ late_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="attendance-item">
+
+                        <div class="attendance-item-label">
+                            On Leave
+                        </div>
+
+                        <div class="attendance-item-value">
+                            {{ leave_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="attendance-item">
+
+                        <div class="attendance-item-label">
+                            Absent
+                        </div>
+
+                        <div class="attendance-item-value">
+                            {{ absent_count }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ATTENDANCE PROGRESS -->
+
+                <div class="progress-wrapper">
+
+                    <div class="progress-header">
+
+                        <span>
+                            Attendance Rate
+                        </span>
+
+                        <span id="attendancePercentage">
+                            {{ attendance_rate|default(0) }}%
+                        </span>
+
+                    </div>
+
+
+                    <div class="progress-track">
+
+                        <div
+                            id="attendanceProgress"
+                            class="progress-bar"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Quick Actions
+                        </h2>
+
+                        <p class="section-description">
+                            Common administrative tasks.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+
+                    <a
+                        href="/students/page"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            Manage Students
+                        </div>
+
+                        <div class="quick-action-description">
+                            View, register and manage students.
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/attendance"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            Today's Attendance
+                        </div>
+
+                        <div class="quick-action-description">
+                            Open the live attendance screen.
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/attendance/history"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            Attendance History
+                        </div>
+
+                        <div class="quick-action-description">
+                            Review previous attendance records.
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/attendance/report"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            Attendance Reports
+                        </div>
+
+                        <div class="quick-action-description">
+                            Generate daily attendance reports.
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/calendar"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            School Calendar
+                        </div>
+
+                        <div class="quick-action-description">
+                            Manage holidays, vacations and OFF days.
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/leaves"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            Student Leave
+                        </div>
+
+                        <div class="quick-action-description">
+                            Manage approved student leave periods.
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="/settings"
+                        class="quick-action"
+                    >
+
+                        <div class="quick-action-title">
+                            School Settings
+                        </div>
+
+                        <div class="quick-action-description">
+                            Configure attendance times and school settings.
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT COLUMN
+        ================================================== -->
+
+        <div>
+
+
+            <!-- TODAY'S SCHOOL STATUS -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Today's School Status
+                        </h2>
+
+                        <p class="section-description">
+                            School-wide calendar status.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if calendar_off %}
+
+                <div class="calendar-status off">
+
+                    <div class="calendar-status-icon">
+                        ⛔
+                    </div>
+
+                    <div>
+
+                        <div class="calendar-status-title">
+                            School OFF Today
+                        </div>
+
+                        <div class="calendar-status-description">
+
+                            {% if calendar_title %}
+
+                                {{ calendar_title }}
+
+                            {% else %}
+
+                                Attendance is disabled
+                                according to the school calendar.
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="calendar-status">
+
+                    <div class="calendar-status-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <div class="calendar-status-title">
+                            Normal School Day
+                        </div>
+
+                        <div class="calendar-status-description">
+                            No school-wide OFF rule is active today.
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- AUTOMATIC ATTENDANCE SCHEDULER -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Automatic Attendance
+                        </h2>
+
+                        <p class="section-description">
+                            Background attendance scheduler.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="scheduler-box">
+
+                    <div
+                        id="schedulerIndicator"
+                        class="scheduler-indicator"
+                    ></div>
+
+
+                    <div>
+
+                        <div
+                            id="schedulerTitle"
+                            class="scheduler-title"
+                        >
+                            Checking scheduler...
+                        </div>
+
+
+                        <div
+                            id="schedulerDescription"
+                            class="scheduler-description"
+                        >
+                            Loading automatic attendance status.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ATTENDANCE INFORMATION
+                 =================================================
+
+                 Intentionally kept simple.
+
+                 We show the attendance population result,
+                 not internal calendar calculation details.
+
+                 Internal backend values such as:
+                   - calendar_off_count
+                   - class_off_count
+
+                 remain available to the backend but are
+                 intentionally NOT displayed here.
+            ================================================== -->
+
+            <div class="section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Attendance Information
+                        </h2>
+
+                        <p class="section-description">
+                            Today's attendance population.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-list">
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Total Students
+                        </div>
+
+                        <div class="info-value">
+                            {{ total_students }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Expected Today
+                        </div>
+
+                        <div class="info-value">
+                            {{ expected_students|default(0) }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Present
+                        </div>
+
+                        <div class="info-value">
+                            {{ present_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Late
+                        </div>
+
+                        <div class="info-value">
+                            {{ late_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Absent
+                        </div>
+
+                        <div class="info-value">
+                            {{ absent_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            On Leave
+                        </div>
+
+                        <div class="info-value">
+                            {{ leave_count }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <div class="info-label">
+                            Not Expected
+                        </div>
+
+                        <div class="info-value">
+                            {{ not_expected_count|default(not_expected|default(0)) }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+    /* =========================================================
+       ATTENDANCE PROGRESS
+    ========================================================= */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const percentageElement =
+                document.getElementById(
+                    "attendancePercentage"
+                );
+
+            const progressBar =
+                document.getElementById(
+                    "attendanceProgress"
+                );
+
+
+            if (
+                percentageElement &&
+                progressBar
+            ) {
+
+                let percentage =
+                    parseFloat(
+                        percentageElement.textContent
+                            .replace("%", "")
+                    );
+
+
+                if (isNaN(percentage)) {
+                    percentage = 0;
+                }
+
+
+                percentage =
+                    Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            percentage
+                        )
+                    );
+
+
+                progressBar.style.width =
+                    percentage + "%";
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       AUTOMATIC SCHEDULER STATUS
+    ========================================================= */
+
+    async function loadSchedulerStatus() {
+
+        const indicator =
+            document.getElementById(
+                "schedulerIndicator"
+            );
+
+
+        const title =
+            document.getElementById(
+                "schedulerTitle"
+            );
+
+
+        const description =
+            document.getElementById(
+                "schedulerDescription"
+            );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/scheduler/status",
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Scheduler status request failed."
+                );
+
+            }
+
+
+            /*
+             * The endpoint requires authentication.
+             *
+             * Because the dashboard is already authenticated,
+             * the browser sends the session cookie automatically.
+             */
+
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            if (
+                !contentType.includes(
+                    "application/json"
+                )
+            ) {
+
+                throw new Error(
+                    "Scheduler endpoint did not return JSON."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            /* -------------------------------------------------
+               SCHEDULER STOPPED
+            ------------------------------------------------- */
+
+            if (!data.scheduler_running) {
+
+                indicator.className =
+                    "scheduler-indicator danger";
+
+                title.textContent =
+                    "Automatic attendance stopped";
+
+                description.textContent =
+                    "The attendance scheduler is not running.";
+
+                return;
+
+            }
+
+
+            /* -------------------------------------------------
+               CALENDAR BLOCK
+            ------------------------------------------------- */
+
+            if (
+                data.calendar_allowed === false
+            ) {
+
+                indicator.className =
+                    "scheduler-indicator warning";
+
+                title.textContent =
+                    "Attendance not scheduled today";
+
+
+                const reason =
+                    data.calendar_title ||
+                    data.calendar_reason ||
+                    "School calendar rules prevent attendance today.";
+
+
+                description.textContent =
+                    reason;
+
+                return;
+
+            }
+
+
+            /* -------------------------------------------------
+               ATTENDANCE WINDOW ACTIVE
+            ------------------------------------------------- */
+
+            if (data.should_start) {
+
+                indicator.className =
+                    "scheduler-indicator";
+
+                title.textContent =
+                    "Attendance session active";
+
+                description.textContent =
+                    "The automatic attendance system is currently within its configured attendance window.";
+
+                return;
+
+            }
+
+
+            /* -------------------------------------------------
+               SCHEDULER READY
+            ------------------------------------------------- */
+
+            indicator.className =
+                "scheduler-indicator";
+
+            title.textContent =
+                "Automatic attendance ready";
+
+
+            if (data.reason) {
+
+                description.textContent =
+                    data.reason;
+
+            } else {
+
+                description.textContent =
+                    "The scheduler is monitoring the configured school attendance window.";
+
+            }
+
+        }
+
+
+        catch (error) {
+
+            indicator.className =
+                "scheduler-indicator warning";
+
+            title.textContent =
+                "Scheduler status unavailable";
+
+            description.textContent =
+                "Unable to read the automatic attendance scheduler status.";
+
+        }
+
+    }
+
+
+    loadSchedulerStatus();
+
+
+    /* =========================================================
+       PERIODIC SCHEDULER STATUS REFRESH
+    ========================================================= */
+
+    setInterval(
+        loadSchedulerStatus,
+        30000
+    );
+
+
+</script>
+
+
+</body>
+
+</html>
